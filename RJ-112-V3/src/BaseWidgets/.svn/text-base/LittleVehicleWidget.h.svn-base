@@ -1,0 +1,51 @@
+#ifndef LITTLEVEHICLEWIDGET_H
+#define LITTLEVEHICLEWIDGET_H
+
+#include <QWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include "../BaseClass/LittleVehicle.h"
+class LittleVehicleWidget : public QWidget,public LittleVehicle
+{
+    Q_OBJECT
+public:
+    explicit LittleVehicleWidget(VehicleType _type,QWidget *parent = 0);
+    ~LittleVehicleWidget();
+
+    void setLittleVehicleName();
+
+signals:
+    
+public slots:
+    void updateValueChange();
+    void updateStatusChange();
+
+private:
+    void            setupUI();
+    QHBoxLayout*    initSwitchValueLayout();
+
+    QSize           m_size;
+    QPushButton*         m_LittleVehicleName;
+
+    //开关量
+    QLabel*        m_ForwardName;
+    QLabel*        m_ForwardStatus;
+    QLabel*        m_BackwardName;
+    QLabel*        m_BackwardStatus;
+    QLabel*        m_BrakingName;
+    QLabel*        m_BrakingStatus;
+    QLabel*        m_GearName;
+    QLabel*        m_GearStatus;
+
+    //数据量
+    QLabel*        m_DistanceName;//行程
+    QLabel*        m_DistanceValue;
+
+    QLabel*        m_SpeedName;//速度
+    QLabel*        m_SpeedValue;
+
+    VehicleType            m_type;
+};
+
+#endif // LITTLEVEHICLEWIDGET_H

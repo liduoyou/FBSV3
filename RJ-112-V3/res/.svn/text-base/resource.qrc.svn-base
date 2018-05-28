@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/Main">
+        <file alias="Title.png">title.png</file>
+        <file alias="windSpeed.png">wind1.png</file>
+        <file alias="picture_icon_nopictures.png">picture_icon_nopictures.png</file>
+        <file alias="pictures_clack.png">pictures_clack.png</file>
+        <file alias="ScrollBar_Btn.png">ScrollBar_Btn.png</file>
+        <file>Scrollbar_Line.png</file>
+        <file>pictures_grid_w140.png</file>
+        <file>pictures_hightlight.png</file>
+        <file>WindDe.png</file>
+        <file>drawer.png</file>
+        <file>drawer_p.png</file>
+        <file>angle.png</file>
+        <file alias="international.qm">international.qm</file>
+        <file alias="international.ts">international.ts</file>
+        <file>left.png</file>
+        <file>more.png</file>
+        <file>right.png</file>
+        <file>left_p.png</file>
+        <file>more_p.png</file>
+        <file>right_p.png</file>
+        <file>drawer_w.png</file>
+        <file>drawer_w_p.png</file>
+    </qresource>
+</RCC>

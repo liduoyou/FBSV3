@@ -1,0 +1,89 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QWidget>
+#include "MainWidget.h"
+#include <QHBoxLayout>
+#include <QMap>
+#include <QTimer>
+//#include "../src/log4qt/logger.h"
+class QZigbeeThread;
+class QGprsThread;
+class RelayStatusThread;
+class DTUThread;
+class CpuMemThread;
+class SettingsManager;
+class AcquisitionPortManager;
+class AcquisitionPort;
+class TcpClientThread;
+class SelfCheckingWidget;
+class CustomTabWidget;
+class MenuListWidget;
+class MainWindow : public QWidget
+{
+    Q_OBJECT
+//    LOG4QT_DECLARE_QCLASS_LOGGER
+public:
+    MainWindow(QWidget *parent = 0);
+    ~MainWindow();
+
+    static MainWindow *instance();
+    void writeDataToSerial(QByteArray data, int count);
+    void systemInitParameter();
+signals:
+    void positionChanged();
+
+protected:
+    void closeEvent(QCloseEvent *event);
+    void paintEvent(QPaintEvent *event);
+
+private slots:
+    void widgetChanged();
+    void onButtonClicked();
+    void updateData();
+    void receiveCpuMemData(double cpu,double mem);
+
+    void tabPageButtonClicked(int index);
+    void activeNotice(bool isActive);
+    void needReactiveWindow();
+private:
+    void                    setupUI();
+    QWidget*                initTopInfor();
+    QString                 splitDateStr(QString datestr);
+
+    QSize                   m_size;
+    MainWidget*             m_MainWidget;
+    QWidget*                m_SettingWidget;
+
+    QStackedWidget*    m_pStackWidget;         //Widget堆栈
+
+    QWidget*           m_TopBtnWidget;
+    QLabel*            m_lBEquipmentNumber;
+    QLabel*            m_EquipmentNumber;
+    QLabel*            m_lBGroupNumber;
+    QLabel*            m_GroupNumber;
+    QLabel*            m_lBVersionNumber;
+    QLabel*            m_VersionNumber;
+    QPushButton*       m_pBtnSetting;
+    QLabel*            m_cpuData;
+    QLabel*            m_memoryData;
+    QLabel*            m_Time;
+    QPushButton*       m_pBtnSwitch;
+    QPushButton*       m_pBtnDrawer;
+
+    SettingsManager*        m_settings;
+    QZigbeeThread*          m_zigbeeThread;
+    QGprsThread*            m_gprsThread;
+    RelayStatusThread*      m_relayStatusThread;
+    TcpClientThread*        m_tcpClientThread;
+    DTUThread*              m_DTUThread;
+    CpuMemThread*           m_cpuMemThread;
+    CustomTabWidget*        m_customTabWidget;
+    MenuListWidget*         m_menuListWidget;
+
+    QTimer*           m_timer;
+
+    static MainWindow* _instance;
+};
+
+#endif // MAINWINDOW_H

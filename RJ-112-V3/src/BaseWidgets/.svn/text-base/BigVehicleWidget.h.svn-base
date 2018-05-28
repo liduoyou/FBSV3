@@ -1,0 +1,71 @@
+#ifndef BIGVEHICLEWIDGET_H
+#define BIGVEHICLEWIDGET_H
+
+#include <QWidget>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QProgressBar>
+#include <QTimer>
+#include "../BaseClass/BigVehicle.h"
+class BigVehicleWidget : public QWidget,public BigVehicle
+{
+    Q_OBJECT
+public:
+    explicit BigVehicleWidget(QWidget *parent = 0);
+    ~BigVehicleWidget();
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *e);
+signals:
+    
+public slots:
+    void updateValueChange();
+    void updateStatusChange();
+
+private:
+    void              setupUI();
+    void setBigVehicleName();
+    QHBoxLayout*      initSwitchValueLayout();
+    double            getWindspeedJIBIE(double wind);
+
+    QSize             m_size;
+
+    QPushButton*           m_BtnBigVehicleName;
+
+    //开关量
+    QLabel*        m_LeftName;
+    QLabel*        m_LeftStatus;
+    QLabel*        m_RightName;
+    QLabel*        m_RightStatus;
+    QLabel*        m_BrakingName;
+    QLabel*        m_BrakingStatus;
+
+    QLabel*        m_DoorLimitName;//起重机门限位名
+    QLabel*        m_DoorLimitStatus;//起重机门限位状态:正常(绿色) 异常(红色)
+
+    QLabel*        m_RollerStatusLabelName;//电缆卷筒状态名
+    QLabel*        m_LeftRollerStatusName;//左电缆卷筒状态名
+    QLabel*        m_LeftRollerStatus;//左电缆卷筒状态:正常(绿色) 异常(红色)
+    QLabel*        m_RightRollerStatusName;//右电缆卷筒状态名
+    QLabel*        m_RightRollerStatus;//右电缆卷筒状态:正常(绿色) 异常(红色)
+
+    QLabel*        m_RailClampLabelName;//夹轨器名
+    QLabel*        m_railclampSteellegName;//钢腿夹轨器名
+    QLabel*        m_railclampSteellegStatus;//钢腿夹轨器状态:正常(绿色) 异常(红色)
+    QLabel*        m_railclampSoftlegName;//柔腿夹轨器名
+    QLabel*        m_railclampSoftlegStatus;//柔腿夹轨器状态:正常(绿色) 异常(红色)
+
+    QLabel*        m_GearName;
+    QLabel*        m_GearStatus;
+
+    //数据量
+    QLabel*        m_SteellegDistanceName;//钢腿行程
+    QLabel*        m_SteellegDistanceValue;//
+
+    QLabel*        m_SoftlegDistanceName;//柔腿行程
+    QLabel*        m_SoftlegDistanceValue;
+
+};
+
+#endif // BIGVEHICLEWIDGET_H

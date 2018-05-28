@@ -1,0 +1,319 @@
+#include "BigVehicleWidget.h"
+#include <QVBoxLayout>
+#include <QEvent>
+#include <QString>
+#include "../DataHeaderDefine.h"
+BigVehicleWidget::BigVehicleWidget(QWidget *parent) :
+    QWidget(parent)
+  , m_size(240,40)
+  , m_BtnBigVehicleName(NULL)
+  , m_LeftName(NULL)
+  , m_LeftStatus(NULL)
+  , m_RightName(NULL)
+  , m_RightStatus(NULL)
+  , m_BrakingName(NULL)
+  , m_BrakingStatus(NULL)
+  , m_DoorLimitName(NULL)
+  , m_DoorLimitStatus(NULL)
+  , m_RollerStatusLabelName(NULL)
+  , m_LeftRollerStatusName(NULL)
+  , m_LeftRollerStatus(NULL)
+  , m_RightRollerStatusName(NULL)
+  , m_RightRollerStatus(NULL)
+  , m_RailClampLabelName(NULL)
+  , m_railclampSteellegName(NULL)
+  , m_railclampSteellegStatus(NULL)
+  , m_railclampSoftlegName(NULL)
+  , m_railclampSoftlegStatus(NULL)
+  , m_GearName(NULL)
+  , m_GearStatus(NULL)
+{
+    setupUI();
+    setBigVehicleName();
+    updateValueChange();
+}
+
+BigVehicleWidget::~BigVehicleWidget()
+{
+}
+
+void BigVehicleWidget::setBigVehicleName()
+{
+    m_BtnBigVehicleName->setText(tr("大车状态"));
+}
+
+void BigVehicleWidget::updateValueChange()
+{
+    m_SteellegDistanceValue->setText(QString::number(getSteellegDistance(),10,2));
+    m_SoftlegDistanceValue->setText(QString::number(getSoftlegDistance(),10,2));
+//    m_SpeedValue->setText(QString::number(getSpeed(),10,2));
+//    m_ScopeValue->setText(QString::number(getScope(),10,2));
+    updateStatusChange();
+}
+
+void BigVehicleWidget::updateStatusChange()
+{
+    if(getLeft()){
+        m_LeftStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+    }else{
+        m_LeftStatus->setStyleSheet("QLabel{border:0px;background-color:#848484;}");
+    }
+    if(getRight()){
+        m_RightStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+    }else{
+        m_RightStatus->setStyleSheet("QLabel{border:0px;background-color:#848484;}");
+    }
+    if(!getBraking()){
+        m_BrakingStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+    }else{
+        m_BrakingStatus->setStyleSheet("QLabel{border:0px;background-color:#FB5D51;}");
+    }
+    m_GearStatus->setText(QString::number(getGear()));
+
+    if(getrailclampSteelleg()){
+        if(m_railclampSteellegStatus != NULL){
+            m_railclampSteellegStatus->setStyleSheet("QLabel{border:0px;background-color:#FB5D51;}");
+        }
+    }else{
+        if(m_railclampSteellegStatus != NULL){
+            m_railclampSteellegStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+        }
+    }
+    if(getrailclampSoftleg()){
+        if(m_railclampSoftlegStatus != NULL){
+            m_railclampSoftlegStatus->setStyleSheet("QLabel{border:0px;background-color:#FB5D51;}");
+        }
+    }else{
+        if(m_railclampSoftlegStatus != NULL){
+            m_railclampSoftlegStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+        }
+    }
+    if(getLeftRollerStatus()){
+        if(m_LeftRollerStatus != NULL){
+            m_LeftRollerStatus->setStyleSheet("QLabel{border:0px;background-color:#FB5D51;}");
+        }
+    }else{
+        if(m_LeftRollerStatus != NULL){
+            m_LeftRollerStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+        }
+    }
+    if(getRightRollerStatus()){
+        if(m_RightRollerStatus != NULL){
+            m_RightRollerStatus->setStyleSheet("QLabel{border:0px;background-color:#FB5D51;}");
+        }
+    }else{
+        if(m_RightRollerStatus != NULL){
+            m_RightRollerStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+        }
+    }
+    if(getDoorLimit()){
+        if(m_DoorLimitStatus != NULL){
+            m_DoorLimitStatus->setStyleSheet("QLabel{border:0px;color:white;font-size:14px;background-color:#FB5D51;}");
+            m_DoorLimitStatus->setText(tr("异常"));
+        }
+    }else{
+        if(m_DoorLimitStatus != NULL){
+            m_DoorLimitStatus->setStyleSheet("QLabel{border:0px;color:white;font-size:14px;background-color:#16CB30;}");
+            m_DoorLimitStatus->setText(tr("正常"));
+        }
+    }
+}
+
+bool BigVehicleWidget::eventFilter(QObject *obj, QEvent *e)
+{
+    if(obj == m_BtnBigVehicleName){
+        if(e->type() == QEvent::Enter){
+            return true;
+        }else if(e->type() == QEvent::Leave){
+            return false;
+        }
+    }
+    return QObject::eventFilter(obj, e);
+}
+
+void BigVehicleWidget::setupUI()
+{
+    setFixedSize(m_size);
+    setStyleSheet("QWidget{padding:0px;}");
+
+    m_BtnBigVehicleName = new QPushButton(this);
+    m_BtnBigVehicleName->setFixedSize(70,30);
+    m_BtnBigVehicleName->setFlat(true);
+    m_BtnBigVehicleName->setFocusPolicy(Qt::NoFocus);
+    m_BtnBigVehicleName->setObjectName("m_BtnBigVehicleName");
+    m_BtnBigVehicleName->setStyleSheet("#m_BtnBigVehicleName{border:0px;color:white;font-size:12px;border-radius:15px;background-color:#16CB30;}");
+
+    QHBoxLayout* HLayout = new QHBoxLayout();
+    HLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    HLayout->setContentsMargins(0, 0, 0, 0);
+    HLayout->setSpacing(5);
+
+    HLayout->addWidget(m_BtnBigVehicleName,1,Qt::AlignCenter);
+    HLayout->addLayout(initSwitchValueLayout());
+
+    setLayout(HLayout);
+}
+
+QHBoxLayout *BigVehicleWidget::initSwitchValueLayout()
+{
+    QHBoxLayout* m_SwitchValueLayout = new QHBoxLayout();
+    m_SwitchValueLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    m_SwitchValueLayout->setContentsMargins(5, 0, 0, 0);
+    m_SwitchValueLayout->setSpacing(15);
+
+    QWidget* switchValue0 = new QWidget();
+    switchValue0->setObjectName("switchValue0");
+    switchValue0->setStyleSheet("#switchValue0{border:0px;}");
+    switchValue0->setFixedSize(30,30);
+    switchValue0->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout0 = new QVBoxLayout();
+    vLayout0->setContentsMargins(0, 0, 0, 0);
+    vLayout0->setSpacing(0);
+
+    m_LeftName = new QLabel();
+    m_LeftName->setAlignment(Qt::AlignCenter);
+    m_LeftName->setText(tr("左行"));
+    m_LeftName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout0->addWidget(m_LeftName,1,Qt::AlignCenter);
+
+    m_LeftStatus = new QLabel();
+    m_LeftStatus->setFixedSize(14,14);
+    m_LeftStatus->setAlignment(Qt::AlignCenter);
+    m_LeftStatus->setStyleSheet("QLabel{border:0px;background-color:#848484;}");
+    vLayout0->addWidget(m_LeftStatus,1,Qt::AlignCenter);
+
+    switchValue0->setLayout(vLayout0);
+
+    QWidget* switchValue1 = new QWidget();
+    switchValue1->setObjectName("switchValue1");
+    switchValue1->setStyleSheet("#switchValue1{border:0px;}");
+    switchValue1->setFixedSize(30,30);
+    switchValue1->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout1 = new QVBoxLayout();
+    vLayout1->setContentsMargins(0, 0, 0, 0);
+    vLayout1->setSpacing(0);
+
+    m_RightName = new QLabel();
+    m_RightName->setAlignment(Qt::AlignCenter);
+    m_RightName->setText(tr("右行"));
+    m_RightName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout1->addWidget(m_RightName,1,Qt::AlignCenter);
+
+    m_RightStatus = new QLabel();
+    m_RightStatus->setFixedSize(14,14);
+    m_RightStatus->setAlignment(Qt::AlignCenter);
+    m_RightStatus->setStyleSheet("QLabel{border:0px;background-color:#848484;}");
+    vLayout1->addWidget(m_RightStatus,1,Qt::AlignCenter);
+
+    switchValue1->setLayout(vLayout1);
+
+    QWidget* switchValue2 = new QWidget();
+    switchValue2->setObjectName("switchValue2");
+    switchValue2->setStyleSheet("#switchValue2{border:0px;}");
+    switchValue2->setFixedSize(30,30);
+    switchValue2->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout2 = new QVBoxLayout();
+    vLayout2->setContentsMargins(0, 0, 0, 0);
+    vLayout2->setSpacing(0);
+
+    m_BrakingName = new QLabel();
+    m_BrakingName->setAlignment(Qt::AlignCenter);
+    m_BrakingName->setText(tr("制动"));
+    m_BrakingName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout2->addWidget(m_BrakingName,1,Qt::AlignCenter);
+
+    m_BrakingStatus = new QLabel();
+    m_BrakingStatus->setFixedSize(14,14);
+    m_BrakingStatus->setAlignment(Qt::AlignCenter);
+    m_BrakingStatus->setStyleSheet("QLabel{border:0px;background-color:#848484;}");
+    vLayout2->addWidget(m_BrakingStatus,1,Qt::AlignCenter);
+
+    switchValue2->setLayout(vLayout2);
+
+    QWidget* switchValue3 = new QWidget();
+    switchValue3->setObjectName("switchValue3");
+    switchValue3->setStyleSheet("#switchValue3{border:0px;}");
+    switchValue3->setFixedSize(30,30);
+    switchValue3->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout3 = new QVBoxLayout();
+    vLayout3->setContentsMargins(0, 0, 0, 0);
+    vLayout3->setSpacing(0);
+
+    m_GearName = new QLabel();
+    m_GearName->setAlignment(Qt::AlignCenter);
+    m_GearName->setText(tr("档位"));
+    m_GearName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout3->addWidget(m_GearName,1,Qt::AlignCenter);
+
+    m_GearStatus = new QLabel();
+    m_GearStatus->setFixedSize(14,14);
+    m_GearStatus->setAlignment(Qt::AlignCenter);
+    m_GearStatus->setText(tr("0"));
+    m_GearStatus->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout3->addWidget(m_GearStatus,1,Qt::AlignCenter);
+
+    switchValue3->setLayout(vLayout3);
+
+    QWidget* switchValue4 = new QWidget();
+    switchValue4->setObjectName("switchValue4");
+    switchValue4->setStyleSheet("#switchValue4{border:0px;}");
+    switchValue4->setFixedSize(60,30);
+    switchValue4->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout4 = new QVBoxLayout();
+    vLayout4->setContentsMargins(0, 0, 0, 0);
+    vLayout4->setSpacing(0);
+
+    m_SteellegDistanceName = new QLabel();
+    m_SteellegDistanceName->setAlignment(Qt::AlignCenter);
+    m_SteellegDistanceName->setText(tr("钢腿行程"));
+    m_SteellegDistanceName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout4->addWidget(m_SteellegDistanceName,1,Qt::AlignCenter);
+
+    m_SteellegDistanceValue = new QLabel();
+    m_SteellegDistanceValue->setFixedSize(55,14);
+    m_SteellegDistanceValue->setAlignment(Qt::AlignCenter);
+    m_SteellegDistanceValue->setText(tr("000.000"));
+    m_SteellegDistanceValue->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout4->addWidget(m_SteellegDistanceValue,1,Qt::AlignCenter);
+
+    switchValue4->setLayout(vLayout4);
+
+    QWidget* switchValue5 = new QWidget();
+    switchValue5->setObjectName("switchValue5");
+    switchValue5->setStyleSheet("#switchValue5{border:0px;}");
+    switchValue5->setFixedSize(60,30);
+    switchValue5->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout5 = new QVBoxLayout();
+    vLayout5->setContentsMargins(0, 0, 0, 0);
+    vLayout5->setSpacing(0);
+
+    m_SoftlegDistanceName = new QLabel();
+    m_SoftlegDistanceName->setAlignment(Qt::AlignCenter);
+    m_SoftlegDistanceName->setText(tr("柔腿行程"));
+    m_SoftlegDistanceName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout5->addWidget(m_SoftlegDistanceName,1,Qt::AlignCenter);
+
+    m_SoftlegDistanceValue = new QLabel();
+    m_SoftlegDistanceValue->setFixedSize(55,14);
+    m_SoftlegDistanceValue->setAlignment(Qt::AlignCenter);
+    m_SoftlegDistanceValue->setText(tr("000.000"));
+    m_SoftlegDistanceValue->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout5->addWidget(m_SoftlegDistanceValue,1,Qt::AlignCenter);
+
+    switchValue5->setLayout(vLayout5);
+
+    m_SwitchValueLayout->addWidget(switchValue0);
+    m_SwitchValueLayout->addWidget(switchValue1);
+    m_SwitchValueLayout->addWidget(switchValue2);
+    m_SwitchValueLayout->addWidget(switchValue3);
+    m_SwitchValueLayout->addWidget(switchValue4);
+    m_SwitchValueLayout->addWidget(switchValue5);
+
+    return m_SwitchValueLayout;
+}

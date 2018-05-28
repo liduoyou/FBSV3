@@ -1,0 +1,436 @@
+#include "MainWindow.h"
+#include <QPainter>
+#include <QStyleOption>
+#include <QVBoxLayout>
+#include <QMouseEvent>
+#include <QGraphicsDropShadowEffect>
+#include <QWidget>
+#include <QDebug>
+#include <QStackedWidget>
+#include <QPropertyAnimation>
+#include "MainWidget.h"
+#include "./QThread/QZigbeeThread.h"
+#include "./QThread/RelayStatusThread.h"
+//#include "./QThread/DTUThread.h"
+#include "./QThread/TcpClientThread.h"
+#include "./Settings/SettingsManager.h"
+//#include "./Component/SelfChecking.h"
+#include "./Component/CommonNotify.h"
+#include "./UI/CustomTabWidget.h"
+#include "./UI/ControlPanel.h"
+#include "./Menu//MenuListWidget.h"
+#include "./QThread/CpuMemThread.h"
+#include "./DataHeaderDefine.h"
+
+MainWindow *MainWindow::_instance = NULL;
+
+MainWindow::MainWindow(QWidget *parent)
+    : QWidget(parent)
+    #ifdef MAXRESOLUTION
+    , m_size(1024,768)
+    #else
+    , m_size(800,480)
+    #endif
+    , m_MainWidget(new MainWidget)
+//    , m_SettingWidget(new SettingsWidget)
+    , m_settings(NULL)
+    , m_zigbeeThread(NULL)
+    , m_gprsThread(NULL)
+    , m_relayStatusThread(NULL)
+    , m_tcpClientThread(NULL)
+    , m_DTUThread(NULL)
+    , m_cpuMemThread(NULL)
+    , m_customTabWidget(new CustomTabWidget)
+    , m_menuListWidget(NULL)
+    , m_timer(NULL)
+{
+    if(_instance == NULL){
+        _instance = this;
+    }
+    m_menuListWidget = new MenuListWidget(this);
+
+    //Selfchecking
+//    SelfChecking::instance()->startSelfChecking();
+    //去掉边框并允许最小化
+#ifdef ARMCOMPILE
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint);
+#endif
+    setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    m_timer = new QTimer();
+    connect(m_timer , SIGNAL(timeout()), this , SLOT(updateData()));
+    m_timer->start(1000);
+
+//    m_settings = SettingsManager::globalInstance();
+    setupUI();
+    systemInitParameter();
+//    connect(MainWidget::instance(),SIGNAL(goSettingWidget()),this,SLOT(widgetChanged()));
+//    connect(SettingsWidget::instance(),SIGNAL(backMainWidget()),this,SLOT(widgetChanged()));
+
+//    PortalCraneDataManager* portalCrance = PortalCraneDataManager::globalInstance();
+
+    // init thread
+#if 1
+    m_zigbeeThread = new QZigbeeThread();
+//    connect(m_zigbeeThread,SIGNAL(sendAcquisitionData(QByteArray)),m_MainWidget,SLOT(receiveAcquisitionData(QByteArray)));
+//    connect(m_zigbeeThread,SIGNAL(updateAcquisitionStatus()),m_MainWidget,SLOT(updateAcquisitionWidgetStatus()));
+    m_zigbeeThread->start();
+#endif
+
+#if 0
+    m_relayStatusThread = new RelayStatusThread();
+    m_relayStatusThread->start();
+    connect(m_relayStatusThread,SIGNAL(sendAcquisitionData(QByteArray)),m_MainWidget,SLOT(receivePLCData(QByteArray)));
+#endif
+
+#if 0
+    m_tcpClientThread = new TcpClientThread();
+    connect(m_tcpClientThread,SIGNAL(sendTcpSocketData(QByteArray)),m_MainWidget,SLOT(receivePLCData(QByteArray)));
+    connect(m_tcpClientThread,SIGNAL(sendConnectStatus(bool)),m_MainWidget,SLOT(isBCNetConnected(bool)));
+    m_tcpClientThread->start();
+#endif
+
+#if 0
+    m_DTUThread = new DTUThread();
+    m_DTUThread->start();
+#endif
+
+#if 1
+    m_cpuMemThread = new CpuMemThread();
+    connect(m_cpuMemThread,SIGNAL(sendCpuMemData(double,double)),this,SLOT(receiveCpuMemData(double,double)));
+    m_cpuMemThread->start();
+#endif
+
+}
+
+MainWindow::~MainWindow()
+{
+#if 0
+    if(m_relayStatusThread->isRunning()){
+        m_relayStatusThread->quit();
+    }
+#endif
+#if 0
+    if(m_DTUThread->isRunning()){
+        m_DTUThread->quit();
+    }
+#endif
+    qDebug()<<"MainWindow::~MainWindow()";
+}
+
+MainWindow *MainWindow::instance(){
+    return _instance;
+}
+
+void MainWindow::writeDataToSerial(QByteArray data, int count)
+{
+//    m_zigbeeThread->writeDataToSerial(data,count);
+}
+
+void MainWindow::setupUI()
+{
+    m_pStackWidget = new QStackedWidget(this);
+    m_pStackWidget->setFocusPolicy(Qt::StrongFocus);
+    m_pStackWidget->setCurrentIndex(0);
+//    phlayout->addWidget(m_pStackWidget);
+
+    setFixedSize(m_size);
+
+    QVBoxLayout* m_vLayout = new QVBoxLayout();
+    m_vLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    m_vLayout->setContentsMargins(0, 0, 0, 0);
+    m_vLayout->setSpacing(4);
+
+    m_vLayout->addWidget(initTopInfor());
+    activateWindow();
+    m_vLayout->addWidget(m_customTabWidget);
+
+    connect(ControlPanel::instance(),SIGNAL(settingCompleted(QList<MenuInfo>)), m_menuListWidget, SLOT(onSettingCompleted(QList<MenuInfo>)));
+    connect(m_menuListWidget,SIGNAL(pageRequest(QString)),ControlPanel::instance(),SLOT(translatePage(QString)));
+    ControlPanel::instance()->structMenuList();
+    setLayout(m_vLayout);
+}
+
+QWidget *MainWindow::initTopInfor()
+{
+    m_TopBtnWidget = new QWidget();
+    m_TopBtnWidget->setObjectName("TopBtnWidget");
+    m_TopBtnWidget->setStyleSheet("#TopBtnWidget{background-color:#0f9d58;}");//4286F4 0f9d58
+    QGraphicsDropShadowEffect *shadow_effect = new QGraphicsDropShadowEffect(m_TopBtnWidget);
+    shadow_effect->setOffset(4,4);
+    shadow_effect->setColor(QColor("#787878"));
+    shadow_effect->setBlurRadius(8);
+    m_TopBtnWidget->setGraphicsEffect(shadow_effect);
+    m_TopBtnWidget->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QHBoxLayout* hTopLayout = new QHBoxLayout();
+    hTopLayout->setContentsMargins(8, 0, 0, 0);
+    hTopLayout->setSpacing(5);
+
+    m_lBEquipmentNumber = new QLabel();
+    m_lBEquipmentNumber->setFixedSize(60,30);
+    m_lBEquipmentNumber->setText(tr("设备编号"));
+    m_lBEquipmentNumber->setAlignment(Qt::AlignCenter);
+    m_lBEquipmentNumber->setObjectName("m_lBEquipmentNumber");
+    m_lBEquipmentNumber->setStyleSheet("#m_lBEquipmentNumber{border:0px;font:bold;color:#FFFFFF;font-size:13px;background-color:transparent;}");
+    hTopLayout->addWidget(m_lBEquipmentNumber);
+
+    m_EquipmentNumber = new QLabel();
+    m_EquipmentNumber->setAcceptDrops(false);
+    m_EquipmentNumber->setContextMenuPolicy(Qt::NoContextMenu);//屏蔽弹出框的显示
+    m_EquipmentNumber->setFocusPolicy(Qt::NoFocus);
+    m_EquipmentNumber->setFixedSize(60,30);
+    m_EquipmentNumber->setText(tr("4050058"));//m_setting->getSysBaseInfor(tr("EquiNumber"))
+    m_EquipmentNumber->setAlignment(Qt::AlignCenter);
+    m_EquipmentNumber->setStyleSheet("QLabel{border:0px;font:bold;color:#FDFDFD;font-size:12px;border-radius:20px;background-color:transparent;}");
+    hTopLayout->addWidget(m_EquipmentNumber);
+
+    m_lBGroupNumber = new QLabel();
+    m_lBGroupNumber->setFixedSize(60,30);
+    m_lBGroupNumber->setText(tr("群组编号"));
+    m_lBGroupNumber->setAlignment(Qt::AlignCenter);
+    m_lBGroupNumber->setObjectName("m_lBGroupNumber");
+    m_lBGroupNumber->setStyleSheet("#m_lBGroupNumber{border:0px;font:bold;color:#FDFDFD;font-size:13px;background-color:transparent;}");
+    hTopLayout->addWidget(m_lBGroupNumber);
+
+    m_GroupNumber = new QLabel();
+    m_GroupNumber->setAcceptDrops(false);
+    m_GroupNumber->setContextMenuPolicy(Qt::NoContextMenu);
+    m_GroupNumber->setFocusPolicy(Qt::NoFocus);
+    m_GroupNumber->setFixedSize(60,30);
+    m_GroupNumber->setText(tr("6050099"));//m_setting->getGroupID()
+    m_GroupNumber->setAlignment(Qt::AlignCenter);
+    m_GroupNumber->setStyleSheet("QLabel{border:0px;font:bold;color:#FDFDFD;font-size:12px;border-radius:20px;background-color:transparent;}");
+    hTopLayout->addWidget(m_GroupNumber);
+
+    m_lBVersionNumber = new QLabel();
+    m_lBVersionNumber->setFixedSize(55,30);
+    m_lBVersionNumber->setText(tr("版本号"));
+    m_lBVersionNumber->setAlignment(Qt::AlignCenter);
+    m_lBVersionNumber->setObjectName("m_lBVersionNumber");
+    m_lBVersionNumber->setStyleSheet("#m_lBVersionNumber{border:0px;font:bold;color:#FDFDFD;font-size:13px;background-color:transparent;}");
+    hTopLayout->addWidget(m_lBVersionNumber);
+
+    m_VersionNumber = new QLabel();
+    m_VersionNumber->setAcceptDrops(false);
+    m_VersionNumber->setContextMenuPolicy(Qt::NoContextMenu);
+    m_VersionNumber->setFocusPolicy(Qt::NoFocus);
+    m_VersionNumber->setFixedSize(55,30);
+    m_VersionNumber->setText(tr("V3.0.0"));//m_setting->getGroupID()
+    m_VersionNumber->setAlignment(Qt::AlignCenter);
+    m_VersionNumber->setStyleSheet("QLabel{border:0px;font:bold;color:#FDFDFD;font-size:12px;border-radius:20px;background-color:transparent;}");
+    hTopLayout->addWidget(m_VersionNumber);
+    hTopLayout->addStretch(1);
+
+
+    m_pBtnSetting = new QPushButton();
+//    connect(m_pBtnSetting,SIGNAL(clicked()),this,SLOT(onBtnSettingsClicked()));
+    m_pBtnSetting->setFixedSize(100,35);
+    m_pBtnSetting->setFlat(true);
+    m_pBtnSetting->setFocusPolicy(Qt::NoFocus);
+    m_pBtnSetting->setVisible(false);
+    m_pBtnSetting->setObjectName("m_pBtnSetting");
+    m_pBtnSetting->setText(tr("菜单"));
+    m_pBtnSetting->setStyleSheet("#m_pBtnSetting{border:0px;font-size:14px;color:black;background-color:#CCCCCC;}");//#FB5D51
+//    hTopLayout->addWidget(m_pBtnSetting);
+
+    m_cpuData = new QLabel();
+    m_cpuData->setFixedSize(40,35);
+    m_cpuData->setFocusPolicy(Qt::NoFocus);
+    m_cpuData->setAlignment(Qt::AlignCenter);
+    m_cpuData->setObjectName("m_cpuData");
+    m_cpuData->setStyleSheet("#m_cpuData{border:0px;color:#FDFDFD;font:bold;font-size:12px;background-color:transparent;}");
+    hTopLayout->addWidget(m_cpuData);
+
+    m_memoryData = new QLabel();
+    m_memoryData->setFixedSize(40,35);
+    m_memoryData->setFocusPolicy(Qt::NoFocus);
+    m_memoryData->setAlignment(Qt::AlignCenter);
+    m_memoryData->setObjectName("m_memoryData");//border-radius:17px;
+    m_memoryData->setStyleSheet("#m_memoryData{border:0px;color:#FDFDFD;font:bold;font-size:12px;background-color:transparent;}");
+    hTopLayout->addWidget(m_memoryData);
+
+    m_Time = new QLabel();
+    m_Time->setAcceptDrops(false);
+    m_Time->setContextMenuPolicy(Qt::NoContextMenu);
+    m_Time->setFocusPolicy(Qt::NoFocus);
+    m_Time->setFixedSize(230,35);
+    m_Time->setAlignment(Qt::AlignCenter);
+    m_Time->setText(QDateTime::currentDateTime().toString(tr("yyyy-MM-dd dddd hh:mm:ss")));
+    m_Time->setStyleSheet("QLabel{border:0px;font:bold;color:#FDFDFD;font-size:13px;border-radius:20px;background-color:transparent;}");
+    hTopLayout->addWidget(m_Time);
+
+    m_pBtnSwitch = new QPushButton();
+    connect(m_pBtnSwitch,SIGNAL(clicked()),this,SLOT(onButtonClicked()));
+    m_pBtnSwitch->setFixedSize(35,35);
+    m_pBtnSwitch->setFlat(true);
+    m_pBtnSwitch->setFocusPolicy(Qt::NoFocus);
+    m_pBtnSwitch->setObjectName("m_pBtnSwitch");
+    m_pBtnSwitch->setStyleSheet("#m_pBtnSwitch{border:0px;border-radius:17px;background-color:#0f9d58;}");
+//    hTopLayout->addWidget(m_pBtnSwitch);
+
+    m_pBtnDrawer = new QPushButton();
+    connect(m_pBtnDrawer,SIGNAL(clicked()),this,SLOT(onButtonClicked()));
+    m_pBtnDrawer->setFixedSize(40,40);
+    m_pBtnDrawer->setFlat(true);
+    m_pBtnDrawer->setFocusPolicy(Qt::NoFocus);
+    m_pBtnDrawer->setCheckable(true);
+    m_pBtnDrawer->setChecked(false);
+    m_pBtnDrawer->setObjectName("m_pBtnDrawer");
+    m_pBtnDrawer->setStyleSheet("#m_pBtnDrawer{border:0px;image: url(:/Main/drawer_w.png);} \
+                            #m_pBtnDrawer:hover:pressed{border:0px;image: url(:/Main/drawer_w_p.png);}\
+                            #m_pBtnDrawer:hover:!pressed{border:0px;image: url(:/Main/drawer_w_p.png);}");
+    hTopLayout->addWidget(m_pBtnDrawer);
+
+    m_TopBtnWidget->setLayout(hTopLayout);
+    return m_TopBtnWidget;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    Q_UNUSED(event)
+    qDebug()<<"MainWindow::closeEvent(QCloseEvent *event)";
+//    m_settings->setFirstStart("firstStartFlag",true);
+//    if(_instance != NULL){
+
+//    }
+    this->close();
+}
+
+void MainWindow::updateData()
+{
+    QDateTime datetime = QDateTime::currentDateTime();
+    m_Time->setText(splitDateStr(datetime.toString(tr("yyyy年MM月dd日 dddd hh:mm:ss"))));
+}
+
+void MainWindow::widgetChanged()
+{
+    QWidget *wid = qobject_cast<QWidget*>(sender());
+    if(wid == m_MainWidget){
+        QPropertyAnimation *animation = new QPropertyAnimation(m_MainWidget, "geometry");
+        animation->setDuration(10);
+        animation->setStartValue(QRect(0, 0, 1280,672));
+        animation->setEndValue(QRect(-1280, 0, 1280,672));
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->start();
+
+        QPropertyAnimation *animation1 = new QPropertyAnimation(m_SettingWidget, "geometry");
+        animation1->setDuration(10);
+        animation1->setStartValue(QRect(1280, 0, 1280,672));
+        animation1->setEndValue(QRect(0, 0, 1280,672));
+        animation1->setEasingCurve(QEasingCurve::OutQuad);
+        animation1->start();
+
+    }else if(wid == m_SettingWidget){
+        QPropertyAnimation *animation = new QPropertyAnimation(m_SettingWidget, "geometry");
+        animation->setDuration(10);
+        animation->setStartValue(QRect(0, 0, 1280,672));
+        animation->setEndValue(QRect(1280, 0, 1280,672));
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->start();
+
+        QPropertyAnimation *animation1 = new QPropertyAnimation(m_MainWidget, "geometry");
+        animation1->setDuration(10);
+        animation1->setStartValue(QRect(-1280, 0, 1280,672));
+        animation1->setEndValue(QRect(0, 0, 1280,672));
+        animation1->setEasingCurve(QEasingCurve::OutQuad);
+        animation1->start();
+
+//        MainWidget::instance()->setSysBaseValue();//系统基本设置”保存“后立即生效
+    }
+}
+
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);//启用反走样以得到平滑的边缘
+    painter.setPen(QColor("#FDFDFD"));
+    painter.setBrush(QColor("#FDFDFD"));
+    painter.save();
+
+    QRect bgRect = rect();
+    bgRect.setWidth(rect().width());
+    bgRect.setHeight(rect().height());
+    painter.drawRect(bgRect);
+
+    painter.restore();
+
+
+    //set Style...
+    QStyleOption opt;
+    opt.init(this);
+    painter.setClipping(true);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
+    QWidget::paintEvent(event);
+}
+
+void MainWindow::onButtonClicked()
+{
+    QPushButton *btn = qobject_cast<QPushButton*>(sender());
+    if(btn == m_pBtnSwitch){
+        CommonNotify::messageBox(tr("提示"),tr("请稍等..."));
+    }else if(btn == m_pBtnDrawer){
+        m_menuListWidget->show();
+        QPropertyAnimation *animation = new QPropertyAnimation(m_menuListWidget, "geometry");// pos
+        animation->setDuration(300);
+//        animation->setStartValue(QPoint(width(),0));
+//        animation->setEndValue(QPoint(width()-185,0));
+        animation->setStartValue(QRect(QPoint(width(),50),QSize(185,225)));
+#ifdef ARMCOMPILE
+        animation->setEndValue(QRect(QPoint(width()-185,50),QSize(185, 225)));
+#else
+        animation->setEndValue(QRect(QPoint(width()-120,50),QSize(185, 225)));
+#endif
+        animation->setEasingCurve(QEasingCurve::OutQuad);
+        animation->start();
+    }
+}
+
+void MainWindow::receiveCpuMemData(double cpu, double mem)
+{
+    m_cpuData->setText(QString::number(cpu,10,1)+"%");
+    m_memoryData->setText(QString::number(mem,10,1)+"%");
+}
+
+QString MainWindow::splitDateStr(QString datestr)
+{
+    if(datestr.contains(tr("Monday"))){
+        datestr.replace(tr("Monday"),tr("星期一"));
+    }else if(datestr.contains(tr("Tuesday"))){
+        datestr.replace(tr("Tuesday"),tr("星期二"));
+    }else if(datestr.contains(tr("Wednesday"))){
+        datestr.replace(tr("Wednesday"),tr("星期三"));
+    }else if(datestr.contains(tr("Thursday"))){
+        datestr.replace(tr("Thursday"),tr("星期四"));
+    }else if(datestr.contains(tr("Friday"))){
+        datestr.replace(tr("Friday"),tr("星期五"));
+    }else if(datestr.contains(tr("Saturday"))){
+        datestr.replace(tr("Saturday"),tr("星期六"));
+    }else if(datestr.contains(tr("Sunday"))){
+        datestr.replace(tr("Sunday"),tr("星期日"));
+    }
+    return datestr;
+}
+
+void MainWindow::tabPageButtonClicked(int index){
+    if(index >= 0  && index < m_pStackWidget->count()){
+        m_pStackWidget->setCurrentIndex(index);
+        needReactiveWindow();
+    }
+}
+
+void MainWindow::activeNotice(bool isActive){
+    if(isActive){
+        needReactiveWindow();
+    }
+}
+
+void MainWindow::needReactiveWindow(){
+    activateWindow();
+    m_pStackWidget->currentWidget()->activateWindow();
+}
+
+void MainWindow::systemInitParameter()
+{
+    m_GroupNumber->setText(SettingsManager::globalInstance()->getGroupID());
+}

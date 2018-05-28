@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/ARM/!svn/ver/459/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI
+END
+CardListView.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/ARM/!svn/ver/403/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/CardListView.cpp
+END
+ControlPanel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/ARM/!svn/ver/464/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/ControlPanel.cpp
+END
+NavigatePointWidget.h
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/ARM/!svn/ver/370/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/NavigatePointWidget.h
+END
+CardListView.h
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/ARM/!svn/ver/403/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/CardListView.h
+END
+ControlPanel.h
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/ARM/!svn/ver/464/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/ControlPanel.h
+END
+CustomTabWidget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/ARM/!svn/ver/464/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/CustomTabWidget.cpp
+END
+DetailWidget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/ARM/!svn/ver/463/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/DetailWidget.cpp
+END
+AbstractWidget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/ARM/!svn/ver/459/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/AbstractWidget.cpp
+END
+CustomTabWidget.h
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/ARM/!svn/ver/432/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/CustomTabWidget.h
+END
+DetailWidget.h
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/ARM/!svn/ver/459/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/DetailWidget.h
+END
+NavigatePointWidget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/ARM/!svn/ver/370/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/NavigatePointWidget.cpp
+END
+AbstractWidget.h
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/ARM/!svn/ver/404/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/UI/AbstractWidget.h
+END

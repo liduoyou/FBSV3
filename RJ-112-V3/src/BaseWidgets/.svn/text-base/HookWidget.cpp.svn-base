@@ -1,0 +1,359 @@
+#include "HookWidget.h"
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QGroupBox>
+#include <QEvent>
+#include <QDebug>
+HookWidget::HookWidget(HookType _type,QWidget *parent) :
+    QWidget(parent)
+  , m_size(240,40)
+  , m_UpName(NULL)
+  , m_UpStatus(NULL)
+  , m_DownName(NULL)
+  , m_DownStatus(NULL)
+  , m_BrakingName(NULL)
+  , m_BrakingStatus(NULL)
+  , m_GearName(NULL)
+  , m_GearStatus(NULL)
+  , m_WeightName(NULL)
+  , m_WeightValue(NULL)
+  , m_HeightName(NULL)
+  , m_HeightValue(NULL)
+  , m_SpeedName(NULL)
+  , m_SpeedValue(NULL)
+  , m_ScopeName(NULL)
+  , m_ScopeValue(NULL)
+  , m_type(_type)
+{
+    setupUI();
+    setHookName();
+    updateValueChange();
+}
+
+HookWidget::~HookWidget()
+{
+}
+
+void HookWidget::setHookName()
+{
+    switch ((HookType)m_type){
+    case Htype_NO1:
+        m_BtnHookName->setText(tr("上小车\n")+tr("起升1"));//上小车1号吊钩
+        break;
+    case Htype_NO2:
+        m_BtnHookName->setText(tr("上小车\n")+tr("起升2"));//上小车2号吊钩
+        break;
+    case Htype_NO3:
+        m_BtnHookName->setText(tr("下小车\n")+tr("主起升"));
+        break;
+    case Htype_NO4:
+        m_BtnHookName->setText(tr("下小车\n")+tr("副起升"));
+        break;
+    case Htype_NO5:
+        m_BtnHookName->setText(tr("前天车\n")+tr("1号吊钩"));
+        break;
+    case Htype_NO6:
+        m_BtnHookName->setText(tr("前天车\n")+tr("2号吊钩"));
+        break;
+    case Htype_NO7:
+        m_BtnHookName->setText(tr("后天车\n")+tr("1号吊钩"));
+        break;
+    case Htype_NO8:
+        m_BtnHookName->setText(tr("后天车\n")+tr("2号吊钩"));
+        break;
+    case Htype_NO9:
+        m_BtnHookName->setText(tr("1#小车\n")+tr("1号吊钩"));
+        break;
+    case Htype_NO10:
+        m_BtnHookName->setText(tr("1#小车\n")+tr("2号吊钩"));
+        break;
+    case Htype_NO11:
+        m_BtnHookName->setText(tr("2#小车\n")+tr("1号吊钩"));
+        break;
+    case Htype_NO12:
+        m_BtnHookName->setText(tr("2#小车\n")+tr("2号吊钩"));
+        break;
+    default:
+        break;
+    }
+}
+
+void HookWidget::updateValueChange()
+{
+    m_WeightValue->setText(QString::number(getWeight(),10,2));
+    m_HeightValue->setText(QString::number(getHeight(),10,2));
+//    m_SpeedValue->setText(QString::number(getSpeed(),10,2));
+//    m_ScopeValue->setText(QString::number(getScope(),10,2));
+    updateStatusChange();
+}
+
+void HookWidget::updateStatusChange()
+{
+    if(getUp()){
+        m_UpStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+    }else{
+        m_UpStatus->setStyleSheet("QLabel{border:0px;background-color:#848484;}");
+    }
+    if(getDown()){
+        m_DownStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+    }else{
+        m_DownStatus->setStyleSheet("QLabel{border:0px;background-color:#848484;}");
+    }
+    if(!getBraking()){
+        m_BrakingStatus->setStyleSheet("QLabel{border:0px;background-color:#16CB30;}");
+    }else{
+        m_BrakingStatus->setStyleSheet("QLabel{border:0px;background-color:#FB5D51;}");
+    }
+    m_GearStatus->setText(QString::number(getGear()));
+}
+
+bool HookWidget::eventFilter(QObject *obj, QEvent *e)
+{
+    if(obj == m_BtnHookName){
+        if(e->type() == QEvent::Enter){
+            return true;
+        }else if(e->type() == QEvent::Leave){
+            return false;
+        }
+    }
+    return QObject::eventFilter(obj, e);
+}
+
+void HookWidget::setupUI()
+{
+    setFixedSize(m_size);
+    setStyleSheet("QWidget{border:0px;}");
+
+    m_BtnHookName = new QPushButton(this);
+    m_BtnHookName->setFixedSize(70,30);
+    m_BtnHookName->setFlat(true);
+    m_BtnHookName->setFocusPolicy(Qt::NoFocus);
+    m_BtnHookName->setObjectName("m_BtnHookName");
+    m_BtnHookName->setStyleSheet("#m_BtnHookName{border:0px;color:white;font-size:12px;border-radius:15px;background-color:#16CB30;}");
+
+    QHBoxLayout* HLayout = new QHBoxLayout();
+    HLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    HLayout->setContentsMargins(0, 0, 0, 0);
+    HLayout->setSpacing(5);
+
+    HLayout->addWidget(m_BtnHookName,1,Qt::AlignCenter);
+    HLayout->addLayout(initSwitchValueLayout());
+
+    setLayout(HLayout);
+}
+
+QHBoxLayout* HookWidget::initSwitchValueLayout()
+{
+    QHBoxLayout* m_SwitchValueLayout = new QHBoxLayout();
+    m_SwitchValueLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    m_SwitchValueLayout->setContentsMargins(5, 0, 0, 0);
+    m_SwitchValueLayout->setSpacing(15);
+
+    QWidget* switchValue0 = new QWidget();
+    switchValue0->setObjectName("switchValue0");
+    switchValue0->setStyleSheet("#switchValue0{border:0px;}");
+    switchValue0->setFixedSize(30,30);
+    switchValue0->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout0 = new QVBoxLayout();
+    vLayout0->setContentsMargins(0, 0, 0, 0);
+    vLayout0->setSpacing(0);
+
+    m_UpName = new QLabel();
+    m_UpName->setAlignment(Qt::AlignCenter);
+    m_UpName->setText(tr("上升"));
+    m_UpName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout0->addWidget(m_UpName,1,Qt::AlignCenter);
+
+    m_UpStatus = new QLabel();
+    m_UpStatus->setFixedSize(14,14);
+    m_UpStatus->setAlignment(Qt::AlignCenter);
+    m_UpStatus->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout0->addWidget(m_UpStatus,1,Qt::AlignCenter);
+
+    switchValue0->setLayout(vLayout0);
+
+    QWidget* switchValue1 = new QWidget();
+    switchValue1->setObjectName("switchValue1");
+    switchValue1->setStyleSheet("#switchValue1{border:0px;}");
+    switchValue1->setFixedSize(30,30);
+    switchValue1->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout1 = new QVBoxLayout();
+    vLayout1->setContentsMargins(0, 0, 0, 0);
+    vLayout1->setSpacing(0);
+
+    m_DownName = new QLabel();
+    m_DownName->setAlignment(Qt::AlignCenter);
+    m_DownName->setText(tr("下降"));
+    m_DownName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout1->addWidget(m_DownName,1,Qt::AlignCenter);
+
+    m_DownStatus = new QLabel();
+    m_DownStatus->setFixedSize(14,14);
+    m_DownStatus->setAlignment(Qt::AlignCenter);
+    m_DownStatus->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout1->addWidget(m_DownStatus,1,Qt::AlignCenter);
+
+    switchValue1->setLayout(vLayout1);
+
+    QWidget* switchValue2 = new QWidget();
+    switchValue2->setObjectName("switchValue2");
+    switchValue2->setStyleSheet("#switchValue2{border:0px;}");
+    switchValue2->setFixedSize(30,30);
+    switchValue2->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout2 = new QVBoxLayout();
+    vLayout2->setContentsMargins(0, 0, 0, 0);
+    vLayout2->setSpacing(0);
+
+    m_BrakingName = new QLabel();
+    m_BrakingName->setAlignment(Qt::AlignCenter);
+    m_BrakingName->setText(tr("制动"));
+    m_BrakingName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout2->addWidget(m_BrakingName,1,Qt::AlignCenter);
+
+    m_BrakingStatus = new QLabel();
+    m_BrakingStatus->setFixedSize(14,14);
+    m_BrakingStatus->setAlignment(Qt::AlignCenter);
+    m_BrakingStatus->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout2->addWidget(m_BrakingStatus,1,Qt::AlignCenter);
+
+    switchValue2->setLayout(vLayout2);
+
+    QWidget* switchValue3 = new QWidget();
+    switchValue3->setObjectName("switchValue3");
+    switchValue3->setStyleSheet("#switchValue3{border:0px;}");
+    switchValue3->setFixedSize(30,30);
+    switchValue3->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout3 = new QVBoxLayout();
+    vLayout3->setContentsMargins(0, 0, 0, 0);
+    vLayout3->setSpacing(0);
+
+    m_GearName = new QLabel();
+    m_GearName->setAlignment(Qt::AlignCenter);
+    m_GearName->setText(tr("档位"));
+    m_GearName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout3->addWidget(m_GearName,1,Qt::AlignCenter);
+
+    m_GearStatus = new QLabel();
+    m_GearStatus->setFixedSize(14,14);
+    m_GearStatus->setAlignment(Qt::AlignCenter);
+    m_GearStatus->setText(tr("0"));
+    m_GearStatus->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout3->addWidget(m_GearStatus,1,Qt::AlignCenter);
+
+    switchValue3->setLayout(vLayout3);
+
+    QWidget* switchValue4 = new QWidget();
+    switchValue4->setObjectName("switchValue4");
+    switchValue4->setStyleSheet("#switchValue4{border:0px;}");
+    switchValue4->setFixedSize(60,30);
+    switchValue4->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout4 = new QVBoxLayout();
+    vLayout4->setContentsMargins(0, 0, 0, 0);
+    vLayout4->setSpacing(0);
+
+    m_WeightName = new QLabel();
+    m_WeightName->setAlignment(Qt::AlignCenter);
+    m_WeightName->setText(tr("吨位"));
+    m_WeightName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout4->addWidget(m_WeightName,1,Qt::AlignCenter);
+
+    m_WeightValue = new QLabel();
+    m_WeightValue->setFixedSize(55,14);
+    m_WeightValue->setAlignment(Qt::AlignCenter);
+    m_WeightValue->setText(tr("000.000"));
+    m_WeightValue->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout4->addWidget(m_WeightValue,1,Qt::AlignCenter);
+
+    switchValue4->setLayout(vLayout4);
+
+    QWidget* switchValue5 = new QWidget();
+    switchValue5->setObjectName("switchValue5");
+    switchValue5->setStyleSheet("#switchValue5{border:0px;}");
+    switchValue5->setFixedSize(60,30);
+    switchValue5->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout5 = new QVBoxLayout();
+    vLayout5->setContentsMargins(0, 0, 0, 0);
+    vLayout5->setSpacing(0);
+
+    m_HeightName = new QLabel();
+    m_HeightName->setAlignment(Qt::AlignCenter);
+    m_HeightName->setText(tr("高度"));
+    m_HeightName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout5->addWidget(m_HeightName,1,Qt::AlignCenter);
+
+    m_HeightValue = new QLabel();
+    m_HeightValue->setFixedSize(55,14);
+    m_HeightValue->setAlignment(Qt::AlignCenter);
+    m_HeightValue->setText(tr("000.000"));
+    m_HeightValue->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#848484;}");
+    vLayout5->addWidget(m_HeightValue,1,Qt::AlignCenter);
+
+    switchValue5->setLayout(vLayout5);
+
+    QWidget* switchValue6 = new QWidget();
+    switchValue6->setObjectName("switchValue6");
+    switchValue6->setStyleSheet("#switchValue6{border:0px;}");
+    switchValue6->setFixedSize(60,30);
+    switchValue6->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout6 = new QVBoxLayout();
+    vLayout6->setContentsMargins(0, 0, 0, 0);
+    vLayout6->setSpacing(0);
+
+    m_SpeedName = new QLabel();
+    m_SpeedName->setAlignment(Qt::AlignCenter);
+    m_SpeedName->setText(tr("速度"));
+    m_SpeedName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout6->addWidget(m_SpeedName,1,Qt::AlignCenter);
+
+    m_SpeedValue = new QLabel();
+    m_SpeedValue->setFixedSize(55,14);
+    m_SpeedValue->setAlignment(Qt::AlignCenter);
+    m_SpeedValue->setText(tr("000.000"));
+    m_SpeedValue->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#CCCCCC;}");
+    vLayout6->addWidget(m_SpeedValue,1,Qt::AlignCenter);
+
+    switchValue6->setLayout(vLayout6);
+
+    QWidget* switchValue7 = new QWidget();
+    switchValue7->setObjectName("switchValue4");
+    switchValue7->setStyleSheet("#switchValue4{border:0px;}");
+    switchValue7->setFixedSize(60,30);
+    switchValue7->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+    QVBoxLayout* vLayout7 = new QVBoxLayout();
+    vLayout7->setContentsMargins(0, 0, 0, 0);
+    vLayout7->setSpacing(0);
+
+    m_ScopeName = new QLabel();
+    m_ScopeName->setAlignment(Qt::AlignCenter);
+    m_ScopeName->setText(tr("幅度"));
+    m_ScopeName->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:transparent;}");
+    vLayout7->addWidget(m_ScopeName,1,Qt::AlignCenter);
+
+    m_ScopeValue = new QLabel();
+    m_ScopeValue->setFixedSize(55,14);
+    m_ScopeValue->setAlignment(Qt::AlignCenter);
+    m_ScopeValue->setText(tr("000.000"));
+    m_ScopeValue->setStyleSheet("QLabel{border:0px;color:black;font-size:12px;background-color:#CCCCCC;}");
+    vLayout7->addWidget(m_ScopeValue,1,Qt::AlignCenter);
+
+    switchValue7->setLayout(vLayout7);
+
+    m_SwitchValueLayout->addWidget(switchValue0);
+    m_SwitchValueLayout->addWidget(switchValue1);
+    m_SwitchValueLayout->addWidget(switchValue2);
+    m_SwitchValueLayout->addWidget(switchValue3);
+    m_SwitchValueLayout->addWidget(switchValue4);
+    m_SwitchValueLayout->addWidget(switchValue5);
+//    m_SwitchValueLayout->addWidget(switchValue6);
+//    m_SwitchValueLayout->addWidget(switchValue7);
+
+    return m_SwitchValueLayout;
+}
