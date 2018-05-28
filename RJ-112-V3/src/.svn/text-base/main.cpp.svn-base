@@ -1,0 +1,31 @@
+#include "MainWindow.h"
+#include <QApplication>
+#include <QTextCodec>
+#include <QFontDatabase>
+#include "./Component/CardWidget.h"
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    #if defined(_MSC_VER) && (_MSC_VER < 1600)
+        QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+    #else
+        QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+    #endif
+#endif
+    //设置字体
+//    QFont font("wenquanyi",6);
+//    app.setFont(font);
+    //将字体文件名传给addApplicationFont,得到字体的Id
+    int fontId = QFontDatabase::addApplicationFont("/lib/WenQuanYiMicroHeiMono.ttf");
+    //将字体Id传给applicationFontFamilies,得到一个QStringList,其中的第一个元素为新添加字体的family
+    QString msyh = QFontDatabase::applicationFontFamilies ( fontId ).at(0);
+    QFont font(msyh,12);
+    //将此字体设为QApplication的默认字体
+    QApplication::setFont(font);
+
+    MainWindow mainWindow;
+    mainWindow.show();
+    
+    return app.exec();
+}

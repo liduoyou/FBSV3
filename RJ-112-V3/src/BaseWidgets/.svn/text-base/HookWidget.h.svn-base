@@ -1,0 +1,61 @@
+#ifndef HOOKWIDGET_H
+#define HOOKWIDGET_H
+
+#include <QWidget>
+#include <QLabel>
+#include <QTimer>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QProgressBar>
+#include "../BaseClass/Hook.h"
+class HookWidget : public QWidget,public Hook
+{
+    Q_OBJECT
+public:
+    explicit HookWidget(HookType _type, QWidget *parent = 0);
+    ~HookWidget();
+
+    void setHookName();
+protected:
+    bool eventFilter(QObject *obj, QEvent *e);
+signals:
+    
+public slots:
+    void updateValueChange();
+    void updateStatusChange();
+private:
+
+    void           setupUI();
+    QHBoxLayout *initSwitchValueLayout();
+
+    QSize          m_size;
+
+    QPushButton*   m_BtnHookName;
+    //开关量
+    QLabel*        m_UpName;
+    QLabel*        m_UpStatus;
+    QLabel*        m_DownName;
+    QLabel*        m_DownStatus;
+    QLabel*        m_BrakingName;
+    QLabel*        m_BrakingStatus;
+
+    QLabel*        m_GearName;
+    QLabel*        m_GearStatus;
+
+    //数据量
+    QLabel*        m_WeightName;//重量
+    QLabel*        m_WeightValue;//
+
+    QLabel*        m_HeightName;//高度
+    QLabel*        m_HeightValue;
+
+    QLabel*        m_SpeedName;//速度
+    QLabel*        m_SpeedValue;
+
+    QLabel*        m_ScopeName;//幅度
+    QLabel*        m_ScopeValue;
+
+    HookType            m_type;
+};
+
+#endif // HOOKWIDGET_H

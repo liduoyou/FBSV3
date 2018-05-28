@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/ARM/!svn/ver/459/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager
+END
+CardViewItemDelegate.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 156
+/svn/ARM/!svn/ver/406/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardViewItemDelegate.cpp
+END
+thumbnailprovider.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 153
+/svn/ARM/!svn/ver/459/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/thumbnailprovider.cpp
+END
+CardListView.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/svn/ARM/!svn/ver/406/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardListView.cpp
+END
+CardViewItemDelegate.h
+K 25
+svn:wc:ra_dav:version-url
+V 154
+/svn/ARM/!svn/ver/406/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardViewItemDelegate.h
+END
+ThumbnailProvider.h
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/svn/ARM/!svn/ver/406/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/ThumbnailProvider.h
+END
+CardManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/ARM/!svn/ver/404/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardManager.cpp
+END
+CardInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/ARM/!svn/ver/406/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardInfo.cpp
+END
+CardListView.h
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/ARM/!svn/ver/404/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardListView.h
+END
+CardListModel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/ARM/!svn/ver/406/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardListModel.cpp
+END
+CardManagerWidget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 153
+/svn/ARM/!svn/ver/406/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardManagerWidget.cpp
+END
+CardManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/svn/ARM/!svn/ver/404/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardManager.h
+END
+CardInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/ARM/!svn/ver/368/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardInfo.h
+END
+CardListModel.h
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/ARM/!svn/ver/404/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardListModel.h
+END
+CardManagerWidget.h
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/svn/ARM/!svn/ver/406/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/V3.0/Qtprojects/RJ-112-V3/src/ListViewManager/CardManagerWidget.h
+END

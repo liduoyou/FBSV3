@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/ARM/!svn/ver/311/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/menji/wuhumenji-new1/RJ-112-V2/src/SerialPort
+END
+qextserialbase.h
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/svn/ARM/!svn/ver/311/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/menji/wuhumenji-new1/RJ-112-V2/src/SerialPort/qextserialbase.h
+END
+qextserialport.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/svn/ARM/!svn/ver/311/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/menji/wuhumenji-new1/RJ-112-V2/src/SerialPort/qextserialport.cpp
+END
+posix_qextserialport.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 156
+/svn/ARM/!svn/ver/311/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/menji/wuhumenji-new1/RJ-112-V2/src/SerialPort/posix_qextserialport.cpp
+END
+qextserialport.h
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/svn/ARM/!svn/ver/311/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/menji/wuhumenji-new1/RJ-112-V2/src/SerialPort/qextserialport.h
+END
+qextserialbase.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/svn/ARM/!svn/ver/311/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/menji/wuhumenji-new1/RJ-112-V2/src/SerialPort/qextserialbase.cpp
+END
+posix_qextserialport.h
+K 25
+svn:wc:ra_dav:version-url
+V 154
+/svn/ARM/!svn/ver/311/%E5%88%86%E5%B8%83%E5%BC%8F%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F/menji/wuhumenji-new1/RJ-112-V2/src/SerialPort/posix_qextserialport.h
+END
